@@ -13,4 +13,3 @@ def getNewValue(char, key):
     if newAscii > 122:
         newAscii = 96 + (newAscii - 122)
     return chr(newAscii)
-
