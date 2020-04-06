@@ -10,51 +10,62 @@ class Node(object):
     def add_child(self, new_child):
         new_child.parent = self
         self.children.append(new_child)
-        self.children.sort(key=lambda x: x.degree())
+        self.children.sort(key=lambda x: x.degree)
         return self
 
     def remove_child(self, child):
         self.children = [node for node in self.children if node != child]
-        self.children.sort(key=lambda x: x.degree())
+        self.children.sort(key=lambda x: x.degree)
         return self
 
+    @property
     def degree(self):
         return len(self.children)
 
     def duplicate(self):
         return copy(self)
 
+    def swap(self, other):
+        self.value, other.value = other.value, self.value
+
+    def destroy(self):
+        for child in self.children:
+            child.parent = self.parent
+        if self.parent is not None:
+            self.parent.remove_child(self)
+        del self
+
     @property
     def depth(self):
         return 0 if self.parent is None else self.parent.depth + 1
 
     def __eq__(self, other):
-        if type(other) is int:
+        if type(other) is int or float:
             return self.value == other
         return self.value == other.value
 
     def __ne__(self, other):
-        if type(other) is int:
+        if type(other) is int or float:
             return not (self.value == other)
         return not (self.value == other.value)
 
     def __lt__(self, other):
-        if type(other) is int:
+        if type(other) is int or float:
             return self.value < other
         return self.value < other.value
 
     def __gt__(self, other):
-        if type(other) is int:
+        if type(other) is int or float:
             return self.value > other
         return self.value > other.value
 
     def __le__(self, other):
-        if type(other) is int:
+        if type(other) is int or float:
             return self.value <= other
         return self.value <= other.value
 
     def __ge__(self, other):
-        if type(other) is int:
+        if type(other) is int or float:
             return self.value >= other
         return self.value >= other.value
 
