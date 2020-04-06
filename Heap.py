@@ -16,12 +16,6 @@ class Heap(object):
     def is_empty(self): # return true if the heap is empty, false otherwise.
         return self.size == 0
 
-    def increase_key(self): #updating a key within a max- or min-heap, respectively
-        pass
-
-    def decrease_key(self): ##updating a key within a max- or min-heap, respectively
-        pass
-
     def create(self): #create an empty heap
         self.__init__()
         return self
@@ -31,12 +25,25 @@ class Heap(object):
 
 
 class MaxHeap(Heap):
-    def push(self, new_node): # "adding a new key to the heap"
+    def increase_key(self, key, increment=1): #updating a key within a max- or min-heap, respectively
+        node_to_increase = self.search_down(key, self.root)
+        if node_to_increase is None:
+            print('Node to increase not found in Heap')
+            return
+        node_to_increase.value += increment
+        self.sift_up(node_to_increase)
+
+    def decrease_key(self, key, decrement=1): #updating a key within a max- or min-heap, respectively
+        node_to_decrease = self.search_down(key, self.root)
+        node_to_decrease.value -= decrement
+        self.sift_up(node_to_decrease)
+
+    def push(self, new_node: Node): # "adding a new key to the heap"
         self.size += 1
         if self.root is None:
             self.root = new_node
         elif new_node > self.root:
-            self.root.value, new_node = new_node, self.root.value
+            new_node.swap(self.root)
             self.add_down(new_node, self.root)
         elif new_node <= self.root:
             self.add_down(new_node, self.root)
@@ -55,7 +62,8 @@ class MaxHeap(Heap):
 
     def heapify(self, values): # create a heap out of given array of elements
         for value in values:
-            self.push(Node(value))
+            new_node = Node(value)
+            self.push(new_node)
 
     def unionize(self): # joining two heaps to form a valid new heap containing all the elements of both, preserving the original heaps.
         pass
@@ -105,16 +113,32 @@ class MaxHeap(Heap):
             cur_node = [node for node in cur_node.children if new_node < node][0]
             self.add_down(new_node, cur_node)
 
+    def search_down(self, find_value, cur_node):
+        if find_value == cur_node:
+            return cur_node
+        if (cur_node.degree == 0) or (find_value > max(cur_node.children)):
+            return None
+        for sub_node in [child for child in cur_node.children if child >= find_value]:
+            result = self.search_down(find_value, sub_node)
+            if result is not None:
+                return result
+        return None
+
+
+
 if __name__ == '__main__':
     test = MaxHeap()
-    num_list = [10,1,2,3,4,5,6,7,8,9,1,1,4]
+    num_list = [1,5,3,8]
     test.heapify(num_list)
-    print(f''
-          f'peek: {test.peek()}\n'
-          f'pop: {test.pop()}\n'
-          f'pop: {test.pop()}\n'
-          f'peek: {test.peek()}\n'
-          f'replace: {test.replace(-2)}\n'
-          f'peek: {test.peek()}\n')
+    print(test)
+    test.increase_key(1,6)
+    print(test)
+    # print(f''
+    #       f'peek: {test.peek()}\n'
+    #       f'pop: {test.pop()}\n'
+    #       f'pop: {test.pop()}\n'
+    #       f'peek: {test.peek()}\n'
+    #       f'replace: {test.replace(-2)}\n'
+    #       f'peek: {test.peek()}\n')
     # max_child = max(test.root.children)
     # print(max_child.value)
